@@ -1,5 +1,9 @@
 # Bufftab.vim
 
+[![GitHub license](https://img.shields.io/github/license/Kogia-sima/bufftab.vim.svg)](https://github.com/Kogia-sima/bufftab.vim/blob/master/LICENSE.txt)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Kogia-sima/bufftab.vim.svg?style=flat)](https://github.com/Kogia-sima/bufftab.vim/commits/master)
+
 Replace Vim tabs to buffer list, handle buffers more flexibly, and make sub-windows (e.g. NERDTree) keep visible for all tabs.
 
 :warning: This plugin is still unstable. If you found a bug, feel free to create an issue or pull request.
