@@ -1,0 +1,207 @@
+*bufftab.txt*  Automatic ctags management for VIM
+
+               BUFFTAB.vim REFERENCE MANUAL
+                      by Kogia-sima
+
+                                                *bufftab*
+
+1. Introduction                          |bufftab-intro|
+ 1.1. Features                           |bufftab-features|
+ 1.2. Similar Plugins                    |bufftab-similar-plugins|
+ 1.3. Important Notes                    |bufftab-important-notes|
+2. Functions                             |bufftab-functions|
+3. Status Line                           |bufftab-tabline|
+ 3.1. Conflicts with another plugins     |bufftab-conflicts|
+4. Global Settings                       |bufftab-settings|
+
+=============================================================================
+1. Introduction                                 *bufftab-intro*
+
+Major GUI Editors (e.g. Visual Studio Code, Sublime Text, Atom) has the
+feature that controls multiple files with builtin tabs. With those tabs you
+can quickly navigate to another files. If you want to go to definition, and
+that file has been not loaded yet, those editors load that file automatically
+and open in newly created tab.
+
+Vim also has the builtin tab feature, which enables to open multiple files.
+However, Vim tabs does not behave like major GUI editors in some points.
+
+* Some buffers are hidden and not displayed in tabs. This behaviour
+  sometimes eat more RAM than expected, and prevents users to quit vim.
+
+* If you navigate to another tab, all sub-windows such as QuickFix are hidden
+  unexpectedly, and if you navigate back to that tab, sub-windows re-appear.
+  (In major GUI editors, builtin tabs behave independently with sub-windows
+  such as file explorer, debug console, preview window)
+
+* Jumps to code does not create new tab automatically. For example, tag
+  jump hide origin file, and that file is no longer displayed in any tabs. You
+  can change the behaviour to open in new tab, but new tab will be always
+  created even if the target file is same as the origin file.
+
+Also, handling buffer like tabpage is very useful to create a debugger plugin
+for Vim. If you want to use Vim as debugger client, you must create many
+sub-windows like call graph, debug console, variable explorer etc. When
+jumpping to another file, vim should open new file as new buffer instead of
+new file in order not to hide all sub-windows.
+
+Bufftab is a plugin that replace Vim tabs to buffer list, handle buffers more
+flexibly, and make sub-windows (e.g. NERDTree) keep visible for all tabs. it
+was developed for the replacement of builtin tabpages. It will even do its
+best to behave like major GUI editors.
+
+
+----------------------------------------------------------------------------
+1.1 Features                                    *bufftab-features*
+
+Bufftab.vim is currently unstable and more features will be implemented by
+version 1.0 release. Currently the following features are supported.
+
+* Highly customizable (you can define original functions to handle buffers and
+  tabs)
+
+* Many functions for buffer navigation (see |bufftab-functions|)
+
+* Replace the tabline with original buffer lists (see |bufftab-tabline|)
+
+* Using original cache system (which means faster, low cpu usage)
+
+* Keep sub-windows visible for all tabs, including: help, quickfix, nerdtree,
+  tagbar, taglist.
+
+* No additional feature is required (all scripts written with Vim script)
+
+
+----------------------------------------------------------------------------
+1.2 Similar Plugins                             *bufftab-similar-plugins*
+
+There are some similar Vim plugins out there, but those plugins are not
+sufficient to make Vim tabpages behave like major GUI editors
+
+* vim-buftabline (https://github.com/ap/vim-buftabline)
+
+vim-buftabline is a simple, lightweight plugin that overrides builtin tabline
+with all buffer lists. However, this plugin lacks features such as buffer
+handling, and does not cache tabline (which makes Vim slower when many buffers
+loaded). This plugin displays only basenames for each files.
+
+* vim-wintabs (https://github.com/zefei/vim-wintabs)
+
+vim-wintabs is very similar plugin with bufftab.vim, but it is not subject to
+behave like major GUI editors. However, vim-wintabs has very weak cache
+system, and then cannot reduce CPU usage well.
+
+vim-wintabs supports multiple windows and window-local buffers. This is very
+useful feature to navigate many files.
+
+* vim-airline (https://github.com/vim-airline/vim-airline)
+
+vim-airline has the extensional feature called Smarter Tab Line. This
+automatically displays all buffers when there's only one tab open. Also each
+label for tab can be customized by changing formatter.
+vim-airline lacks features for handling buffers.
+
+
+----------------------------------------------------------------------------
+1.3 Important Notes                             *bufftab-important-notes*
+
+Bufftab.vim is mainly subject to single-source-layout, which place only one
+source file in each tab. Sub-windows are unlimited.
+
+If you open multiple source files in a single tab, and navigate to another tab,
+only current window will be changed and another windows remain visible. This
+behavior might be changed by future release.
+
+
+=============================================================================
+2. Functions                                    *bufftab-functions*
+
+bufftab#init()                                  *bufftab#init()*
+        Set buffer list as &tabline.
+        This function sets all required vim options and create buffer lists.
+        You don't have to call explicitly (since plugin calls this function
+        automatically).
+
+                                                *bufftab#update()*
+bufftab#update([{current-only}[, {force-update}]])
+        Update buffer list.
+        If {current-only} is set to 1, only the current buffer is updated.
+        {force-update} is used to ignore cache and should not be specified
+        whenever you don't understand what you are doing.
+
+bufftab#render()                                *bufftab#render()*
+        Returns current &tabline text.
+        This function is automatically set to &tabline.
+
+bufftab#get_bufs()                              *bufftab#get_bufs()*
+        Returns the current buffer list.
+        Each buffer contains the following properties.
+
+        label            (String)
+        buffer label to be displayed in tabline.
+
+        pre              (String)
+        prefix to be displayed before label.
+        This prefix may contains buffer ID and file indicator.
+
+bufftab#next()                                  *bufftab#next()*
+        Go to next buffer
+
+bufftab#previous()                              *bufftab#previous()*
+        Go to previous buffer
+
+bufftab#close([{force}])                        *bufftab#close()*
+        Close the current buffer
+        If {force} is set to 1, Bufftab closes the current buffer even if the
+        modification is not saved.
+
+
+=============================================================================
+3. Tab Line                                     *bufftab-tabline*
+
+Bufftab shows the current buffer list on &tabline.
+
+Each time Vim redraws the tabline, Vim calls |bufftab#render()| function. This
+function finds all loaded buffer IDs, and load buffer labels from cache, and
+then concatenate to a single string.
+
+Since |bufftab#render()| uses a cache, sometimes you must update the cache by calling |bufftab#update()|. For instance, if you want to update the cache whenever the 'UserEvent' triggered, you can use autocmd to achieve this.
+>
+        autocmd User UserEvent * call bufftab#update()
+<
+
+-----------------------------------------------------------------------------
+3.1. Conflicts with another plugins             *bufftab-conflicts*
+
+Since Bufftab overrides the &tabline option, it may causes the conflicts with another plugin.
+
+3.1.1. lightline.vim                            *bufftab-conflicts-lightline*
+
+You can disable the tabline feature of lightline.vim.
+>
+        let g:lightline = { ... }
+        let g:lightline.enable = {'tabline': 0}
+<
+
+
+=============================================================================
+4. Global Settings                              *bufftab-settings*
+
+The following settings can be defined in your |vimrc| to change the default
+behaviour of Bufftab.
+
+g:bufftab_numbers                               *bufftab_numbers*
+        Shows the buffer ID for each tab.
+        Defaults to `0`.
+
+g:bufftab_indicators                            *bufftab_indicators*
+        Shows the each buffer status on tabline.
+        If the buffer is modified, "+" sign is displayed before the label.
+        Defaults to `1`
+
+g:bufftab_close_lastbuf                         *bufftab_close_lastbuf*
+        Close vim after the last tab was closed.
+        Defaults to `1`
+
+
+ vim:tw=78:et:ft=help:norl:
