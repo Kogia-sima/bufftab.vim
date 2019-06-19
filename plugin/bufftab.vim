@@ -23,7 +23,7 @@ hi default link BuffTabFill    TabLineFill
 
 let g:bufftab_numbers    = get(g:, 'bufftab_numbers',    0)
 let g:bufftab_indicators = get(g:, 'bufftab_indicators', 1)
-let g:bufftab_close_lastbuf = get(g:, 'bufftab_close_lastbuf', 1)
+let g:bufftab_autoclose = get(g:, 'bufftab_autoclose', 1)
 
 augroup BuffTab
   autocmd!

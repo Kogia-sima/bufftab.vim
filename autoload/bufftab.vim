@@ -138,7 +138,7 @@ function! bufftab#previous() abort
 endfunction
 
 function! bufftab#close() abort
-  if g:bufftab_close_lastbuf
+  if g:bufftab_autoclose
     let l:bufcount = len(s:user_buffers())
     if l:bufcount <= 1
       execute "quit"
