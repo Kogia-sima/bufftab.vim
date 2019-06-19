@@ -23,9 +23,9 @@ endfunction
 
 function! s:is_subwindow(...) abort
   if a:0 == 0
-    return (&ft =~ 'nerdtree\|tagbar\|qf\|help')
+    return (&buftype =~ 'nofile\|quickfix\|help')
   else
-    return (getbufvar(a:1, "&ft") =~ 'nerdtree\|tagbar\|qf\|help')
+    return (getbufvar(a:1, "&buftype") =~ 'nofile\|quickfix\|help')
   endif
 endfunction
 
