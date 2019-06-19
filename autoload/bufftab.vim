@@ -121,7 +121,7 @@ function! bufftab#render()
   return swallowclicks . join(map(bufnums,'"%#BuffTab" . s:get_highlight(v:val) . "# " . s:tabs[v:val].pre . s:tabs[v:val].label'),'') . '%#BufTabLineFill#'
 endfunction
 
-function! bufftab#get_tags() abort
+function! bufftab#get_bufs() abort
   return s:tabs
 endfunction
 
@@ -138,7 +138,7 @@ function! bufftab#previous() abort
 endfunction
 
 function! bufftab#close() abort
-  if g:bufftab_close_lastbuf
+  if g:bufftab_autoclose
     let l:bufcount = len(s:user_buffers())
     if l:bufcount <= 1
       execute "quit"
