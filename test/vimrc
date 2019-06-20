@@ -1,0 +1,7 @@
+filetype off
+let &runtimepath .= ','.glob(expand('<sfile>:p:h') . '/vader.vim') . ',..'
+filetype plugin indent on
+syntax enable
+set nomore
+set noswapfile
+set viminfo=

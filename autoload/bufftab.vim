@@ -11,7 +11,7 @@ let s:dirsep = fnamemodify(getcwd(),':p')[-1:]
 let s:show_num = g:bufftab_numbers == 1
 let s:show_ord = g:bufftab_numbers == 2
 let s:show_mod = g:bufftab_indicators
-let s:tabs = {}
+let s:buffers = {}
 
 function! s:user_buffers() " help buffers are always unlisted, but quickfix buffers are not
   return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -56,7 +56,7 @@ function! bufftab#update(...)
 
   if current_only
     let bufnum = winbufnr(0)
-    if !has_key(s:tabs, bufnum)
+    if !has_key(s:buffers, bufnum)
       return
     endif
     if force_update
@@ -64,28 +64,28 @@ function! bufftab#update(...)
       if isdirectory(path)
         return
       endif
-      let s:tabs[bufnum] = {'label': (strlen(path) ? s:label(path) : '[No Name]') . ' ', 'pre': s:show_num ? bufnum : ''}
+      let s:buffers[bufnum] = {'label': (strlen(path) ? s:label(path) : '[No Name]') . ' ', 'pre': s:show_num ? bufnum : ''}
     endif
 
     if s:show_mod
       let pre = ( getbufvar(bufnum, '&mod') ? '+' : '' )
       let pre .= s:show_num ? bufnum : ''
-      let s:tabs[bufnum].pre = strlen(pre) ? pre . ' ' : ''
+      let s:buffers[bufnum].pre = strlen(pre) ? pre . ' ' : ''
     endif
   else
     for bufnum in bufnums
-      if !has_key(s:tabs, bufnum) || force_update
+      if !has_key(s:buffers, bufnum) || force_update
         let path = bufname(bufnum)
         if isdirectory(path)
           continue
         endif
-        let s:tabs[bufnum] = {'label': (strlen(path) ? s:label(path) : '[No Name]') . ' ', 'pre': s:show_num ? bufnum : ''}
+        let s:buffers[bufnum] = {'label': (strlen(path) ? s:label(path) : '[No Name]') . ' ', 'pre': s:show_num ? bufnum : ''}
       endif
 
       if s:show_mod
         let pre = ( getbufvar(bufnum, '&mod') ? '+' : '' )
         let pre .= s:show_num ? bufnum : ''
-        let s:tabs[bufnum].pre = strlen(pre) ? pre . ' ' : ''
+        let s:buffers[bufnum].pre = strlen(pre) ? pre . ' ' : ''
       endif
     endfor
   endif
@@ -94,11 +94,11 @@ function! bufftab#update(...)
 endfunction
 
 function! bufftab#render()
-  let bufnums = s:user_buffers()
+  let bufnums = filter(sort(map(keys(s:buffers), 'str2nr(v:val)')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
   let swallowclicks = '%'.(1 + tabpagenr('$')).'X'
 
   " " pick up data on all the buffers
-  " let tabs = []
+  " let buffers = []
   " let currentbuf = winbufnr(0)
   " let screen_num = 0
   " for bufnum in bufnums
@@ -115,14 +115,14 @@ function! bufftab#render()
   "   else " unnamed file
   "     let tab.label = '[No Name] '
   "   endif
-  "   let tabs += [tab]
+  "   let buffers += [tab]
   " endfor
 
-  return swallowclicks . join(map(bufnums,'"%#BuffTab" . s:get_highlight(v:val) . "# " . s:tabs[v:val].pre . s:tabs[v:val].label'),'') . '%#BufTabLineFill#'
+  return swallowclicks . join(map(bufnums,'"%#BuffTab" . s:get_highlight(v:val) . "# " . s:buffers[v:val].pre . s:buffers[v:val].label'),'') . '%#BufTabLineFill#'
 endfunction
 
-function! bufftab#get_tags() abort
-  return s:tabs
+function! bufftab#get_bufs() abort
+  return s:buffers
 endfunction
 
 function! bufftab#next() abort
