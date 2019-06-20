@@ -94,7 +94,7 @@ function! bufftab#update(...)
 endfunction
 
 function! bufftab#render()
-  let bufnums = s:user_buffers()
+  let bufnums = filter(sort(map(keys(s:buffers), 'str2nr(v:val)')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
   let swallowclicks = '%'.(1 + tabpagenr('$')).'X'
 
   " " pick up data on all the buffers
