@@ -9,38 +9,38 @@ Execute (Initialize):
 # When not specifying filename, name its buffer '[No Name]'
 Execute (No Name Buffer):
   let buffers = copy(bufftab#get_bufs())
-  AssertEqual buffers[winbufnr(0)].label, '[No Name] '
-  AssertEqual buffers[winbufnr(0)].pre, ''
+  AssertEqual '[No Name] ', buffers[winbufnr(0)].label
+  AssertEqual '', buffers[winbufnr(0)].pre
   unlet buffers
 
 # directory should not be listed in buffer list
 Execute (Directory):
   execute "e vader.vim"
   let buffers = copy(bufftab#get_bufs())
-  AssertEqual index(keys(buffers), winbufnr(0)), -1
-  AssertEqual len(buffers), vader_bufnums + 1
+  AssertEqual -1, index(keys(buffers), winbufnr(0))
+  AssertEqual vader_bufnums + 1, len(buffers)
 
   call bufftab#close()
-  AssertEqual len(bufftab#get_bufs()), vader_bufnums
+  AssertEqual vader_bufnums, len(bufftab#get_bufs())
   unlet buffers
 
 # '+' mark should be added after editing buffer
 Execute (Edit):
   execute "e tmp.txt"
   let buffers = copy(bufftab#get_bufs())
-  AssertEqual index(keys(buffers), winbufnr(0)), -1
-  AssertEqual len(buffers), vader_bufnums + 1
-  AssertEqual buffers[winbufnr(0)].label, 'tmp.txt '
-  AssertEqual buffers[winbufnr(0)].pre, ''
+  AssertEqual -1, index(keys(buffers), winbufnr(0))
+  AssertEqual vader_bufnums + 1, len(buffers)
+  AssertEqual 'tmp.txt ', buffers[winbufnr(0)].label
+  AssertEqual '', buffers[winbufnr(0)].pre
 
   call setline(1, "Hello!")
-  AssertEqual buffers[winbufnr(0)].pre, '+ '
+  AssertEqual '+ ', buffers[winbufnr(0)].pre
 
   execute "w!"
-  AssertEqual buffers[winbufnr(0)].pre, ''
+  AssertEqual '', buffers[winbufnr(0)].pre
 
   call bufftab#close()
-  AssertEqual len(bufftab#get_bufs()), vader_bufnums
+  AssertEqual vader_bufnums, len(bufftab#get_bufs())
   unlet buffers
 
 # Simple Buffer Switching
@@ -51,16 +51,16 @@ Execute (Buffer Switch):
   let buffers = copy(bufftab#get_bufs())
 
   call bufftab#previous()
-  AssertEqual buffers[winbufnr(0)].label, 'tmpB '
+  AssertEqual 'tmpB ', buffers[winbufnr(0)].label
 
   call bufftab#previous()
-  AssertEqual buffers[winbufnr(0)].label, 'tmpA '
+  AssertEqual 'tmpA ', buffers[winbufnr(0)].label
 
   call bufftab#next()
-  AssertEqual buffers[winbufnr(0)].label, 'tmpB '
+  AssertEqual 'tmpB ', buffers[winbufnr(0)].label
 
   call bufftab#next()
-  AssertEqual buffers[winbufnr(0)].label, 'tmpC '
+  AssertEqual 'tmpC ', buffers[winbufnr(0)].label
 
   call bufftab#close()
   call bufftab#close()
@@ -77,9 +77,9 @@ Execute (Duplicate Path):
   execute "e tmpD"
   execute "e tmpA"
 
-  AssertEqual len(bufftab#get_bufs()), vader_bufnums + 4
+  AssertEqual vader_bufnums + 4, len(bufftab#get_bufs())
 
   call bufftab#next()
   call bufftab#close()
 
-  AssertEqual len(bufftab#get_bufs()), vader_bufnums + 3
+  AssertEqual vader_bufnums + 3, len(bufftab#get_bufs())
