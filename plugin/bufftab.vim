@@ -29,12 +29,12 @@ augroup BuffTab
   autocmd!
   autocmd VimEnter  * call bufftab#init()
   "autocmd TabEnter  * call bufftab#update()
-  autocmd BufAdd    * call bufftab#update()
+  autocmd BufAdd    * call bufftab#update(0, 1)
   autocmd BufDelete * call bufftab#update()
   autocmd BufRead * call bufftab#update(1, 1)
 
   if g:bufftab_indicators
-    autocmd TextChanged,TextChangedI,TextChanged,BufWritePost * call bufftab#update(1)
+    autocmd TextChanged,TextChangedI,BufWritePost * call bufftab#update(1)
   endif
 augroup END
 

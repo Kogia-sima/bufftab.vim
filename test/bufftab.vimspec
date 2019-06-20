@@ -41,13 +41,12 @@ Describe bufftab
     let l:buffers = bufftab#get_bufs()
     Assert Equals(l:buffers[winbufnr(0)].pre, '+ ')
   
-    execute "w!"
+    execute "undo"
     let l:buffers = bufftab#get_bufs()
     Assert Equals(l:buffers[winbufnr(0)].pre, '')
   
     call bufftab#close()
     Assert Equals(len(bufftab#get_bufs()), 1)
-    call themis#log(execute('ls'))
   End
 
   It should handle buffer switching correctly
