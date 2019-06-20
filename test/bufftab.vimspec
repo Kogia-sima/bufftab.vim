@@ -1,0 +1,92 @@
+Describe bufftab
+  Before each
+    let l:bufnums = keys(bufftab#get_bufs())
+    for bufnum in l:bufnums
+      execute 'bd! ' . bufnum
+    endfor
+  End
+
+  It should name non-named buffer [No Name]
+    call bufftab#init()
+    let l:buffers = bufftab#get_bufs()
+    Assert Equals(l:buffers[winbufnr(0)].label, '[No Name] ')
+    Assert Equals(l:buffers[winbufnr(0)].pre, '')
+  End
+
+  It should not include directory buffer
+    execute "e vader.vim"
+    let l:buffers = copy(bufftab#get_bufs())
+    Assert Equals(index(keys(l:buffers), winbufnr(0)), -1)
+    Assert Equals(len(l:buffers), 1)
+  
+    " delete directory buffer
+    let l:bufnum = winbufnr(0)
+    execute "e tmp"
+    execute "bw " . l:bufnum
+    call bufftab#close()
+
+    let l:buffers = copy(bufftab#get_bufs())
+    Assert Equals(len(l:buffers), 1)
+  End
+
+  It should mark '+' sign when the buffer edited
+    execute "e tmp.txt"
+    let l:buffers = bufftab#get_bufs()
+    Assert Equals(index(keys(l:buffers), winbufnr(0)), -1)
+    Assert Equals(len(l:buffers), 1)
+    Assert Equals(l:buffers[winbufnr(0)].label, 'tmp.txt ')
+    Assert Equals(l:buffers[winbufnr(0)].pre, '')
+  
+    call setline(1, "Hello!")
+    let l:buffers = bufftab#get_bufs()
+    Assert Equals(l:buffers[winbufnr(0)].pre, '+ ')
+  
+    execute "w!"
+    let l:buffers = bufftab#get_bufs()
+    Assert Equals(l:buffers[winbufnr(0)].pre, '')
+  
+    call bufftab#close()
+    Assert Equals(len(bufftab#get_bufs()), 1)
+    call themis#log(execute('ls'))
+  End
+
+  It should handle buffer switching correctly
+    execute "e tmpA"
+    execute "e tmpB"
+    execute "e tmpC"
+    let l:buffers = copy(bufftab#get_bufs())
+  
+    call bufftab#next()
+    Assert Equals(l:buffers[winbufnr(0)].label, 'tmpA ')
+  
+    call bufftab#next()
+    Assert Equals(l:buffers[winbufnr(0)].label, 'tmpB ')
+  
+    call bufftab#previous()
+    Assert Equals(l:buffers[winbufnr(0)].label, 'tmpA ')
+  
+    call bufftab#previous()
+    Assert Equals(l:buffers[winbufnr(0)].label, 'tmpC ')
+  
+    call bufftab#close()
+    call bufftab#close()
+    call bufftab#close()
+  End
+
+  It should merge buffers for same file
+    execute "e tmpA"
+    execute "e tmpB"
+    execute "e tmpC"
+  
+    split
+    execute "e tmpD"
+    execute "e tmpA"
+  
+    Assert Equals(len(bufftab#get_bufs()), 4)
+  
+    call bufftab#next()
+    call bufftab#close()
+  
+    Assert Equals(len(bufftab#get_bufs()), 3)
+  End
+End

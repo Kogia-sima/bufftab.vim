@@ -1,0 +1,4 @@
+let g:bufftab_autoclose = 0
+let g:netrw_fastbrowse = 0
+
+call themis#helper('command').with(themis#helper('assert'))

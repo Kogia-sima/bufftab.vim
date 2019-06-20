@@ -1,8 +1,0 @@
-filetype off
-let g:bufftab_autoclose = 0
-let &runtimepath .= ','.glob(expand('<sfile>:p:h') . '/vader.vim') . ',..'
-filetype plugin indent on
-syntax enable
-set nomore
-set noswapfile
-set viminfo=
