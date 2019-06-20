@@ -199,7 +199,7 @@ g:bufftab_indicators                            *bufftab_indicators*
         If the buffer is modified, "+" sign is displayed before the label.
         Defaults to `1`
 
-g:bufftab_close_lastbuf                         *bufftab_close_lastbuf*
+g:bufftab_autoclose                             *bufftab_autoclose*
         Close vim after the last tab was closed.
         Defaults to `1`
 

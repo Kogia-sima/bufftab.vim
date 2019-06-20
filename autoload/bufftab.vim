@@ -23,9 +23,9 @@ endfunction
 
 function! s:is_subwindow(...) abort
   if a:0 == 0
-    return (&ft =~ 'nerdtree\|tagbar\|qf\|help')
+    return (&buftype =~ 'nofile\|quickfix\|help')
   else
-    return (getbufvar(a:1, "&ft") =~ 'nerdtree\|tagbar\|qf\|help')
+    return (getbufvar(a:1, "&buftype") =~ 'nofile\|quickfix\|help')
   endif
 endfunction
 
@@ -138,7 +138,7 @@ function! bufftab#previous() abort
 endfunction
 
 function! bufftab#close() abort
-  if g:bufftab_close_lastbuf
+  if g:bufftab_autoclose
     let l:bufcount = len(s:user_buffers())
     if l:bufcount <= 1
       execute "quit"
