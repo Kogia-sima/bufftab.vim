@@ -37,11 +37,15 @@ Describe bufftab
     Assert Equals(l:buffers[winbufnr(0)].label, 'tmp.txt ')
     Assert Equals(l:buffers[winbufnr(0)].pre, '')
   
+    " setline() in vimscript does not trigger TextChanged, so
+    " we have to manually trigger the event
     call setline(1, "Hello!")
+    doautocmd TextChanged
     let l:buffers = bufftab#get_bufs()
     Assert Equals(l:buffers[winbufnr(0)].pre, '+ ')
   
     execute "undo"
+    doautocmd TextChanged
     let l:buffers = bufftab#get_bufs()
     Assert Equals(l:buffers[winbufnr(0)].pre, '')
   
