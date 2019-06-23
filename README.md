@@ -1,5 +1,6 @@
 # Bufftab.vim
 
+[![Build Status](https://travis-ci.org/Kogia-sima/bufftab.vim.svg?branch=master)](https://travis-ci.org/Kogia-sima/bufftab.vim)
 [![GitHub license](https://img.shields.io/github/license/Kogia-sima/bufftab.vim.svg)](https://github.com/Kogia-sima/bufftab.vim/blob/master/LICENSE.txt)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
 [![GitHub last commit](https://img.shields.io/github/last-commit/Kogia-sima/bufftab.vim.svg?style=flat)](https://github.com/Kogia-sima/bufftab.vim/commits/master)

@@ -121,8 +121,9 @@ function! bufftab#render()
   return swallowclicks . join(map(bufnums,'"%#BuffTab" . s:get_highlight(v:val) . "# " . s:buffers[v:val].pre . s:buffers[v:val].label'),'') . '%#BufTabLineFill#'
 endfunction
 
+" for unittest
 function! bufftab#get_bufs() abort
-  return s:buffers
+  return filter(copy(s:buffers), 'buflisted(str2nr(v:key))')
 endfunction
 
 function! bufftab#next() abort
