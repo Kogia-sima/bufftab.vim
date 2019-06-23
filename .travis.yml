@@ -13,3 +13,6 @@ before_script:
 script:
   - vim --version
   - /tmp/vim-themis/bin/themis --reporter dot
+
+notifications:
+  email: false
